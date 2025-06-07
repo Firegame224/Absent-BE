@@ -8,7 +8,7 @@
     "jsx": "react-jsx",
     "allowJs": true,
 
-    "rootDir": "src",
+    "rootDir": "",
     "outDir": "disc",
 
     // Bundler mode

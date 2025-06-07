@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "./generate"
 }
 
 datasource db {
@@ -15,13 +16,40 @@ enum Role {
   Admin
 }
 
+enum AbsenStatus {
+  Hadir
+  Alpha
+  Terlambat
+  Izin
+}
+
 model User {
   id       String  @id @default(uuid())
   email    String  @unique
   password String?
   name     String?
 
-  role      Role     @default(User)
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
+  role Role @default(User)
+
+  absens    AbsenUser[]
+  createdAt DateTime    @default(now())
+  updateAt  DateTime    @updatedAt
+}
+
+model Absens {
+  id         String      @id @default(uuid())
+  userAbsens AbsenUser[]
+
+  tanggal DateTime @unique
+}
+
+model AbsenUser {
+  user    User   @relation(references: [id], fields: [userId], onDelete: Cascade)
+  userId  String
+  absen   Absens @relation(references: [id], fields: [absenId], onDelete: Cascade)
+  absenId String
+
+  status AbsenStatus @default(Alpha)
+
+  @@id([absenId , userId])
 }

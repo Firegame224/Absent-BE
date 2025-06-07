@@ -10,6 +10,9 @@ export class userRepository {
       where: {
         id: userData.id,
       },
+      include: {
+        absens: true,
+      },
     });
   }
   async getUserByEmail(userData: { email: string }) {
