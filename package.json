@@ -1,29 +1,37 @@
 {
-  "name": "express_ts-3",
+  "name": "express_ts-2",
   "module": "index.ts",
   "type": "module",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@types/express": "^5.0.2",
-    "@types/node": "^22.15.30",
-    "cookie-parser": "^1.4.7",
-    "eslint": "^9.28.0",
-    "nodemon": "^3.1.10",
-    "prettier": "^3.5.3",
-    "ts-node": "^10.9.2"
-  },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/app.ts",
+    "start": "bun src/app.ts",
     "dev": "nodemon --watch src --ext ts --exec bun src/app.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "eslint": "^9.25.1",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.5.3",
+    "prisma": "^6.9.0",
+    "ts-node": "^10.9.2"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@prisma/client": "^6.7.0",
     "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/jsonwebtoken": "^9.0.9",
+    "bcryptjs": "^3.0.2",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2"
   }
 }
