@@ -6,22 +6,21 @@ import { absenService } from "./absen.service";
 import { userRepository } from "../user/user.repository";
 import { absenRepository } from "./absen.repository";
 
-const absenRoute = Router();
+export const absenRoute = Router();
 
 const userRepo = new userRepository();
 const absenRepo = new absenRepository();
 const service = new absenService(absenRepo, userRepo);
 const controller = new absenController(service);
 
+// Absen admin
 absenRoute.get("/", authMiddleware, adminMiddleware, controller.getAllAbsen.bind(controller));
-absenRoute.post("/" , authMiddleware , adminMiddleware , controller.createAbsen.bind(controller));
+absenRoute.post("/", authMiddleware , adminMiddleware , controller.createAbsen.bind(controller));
 
-// 
+// Absen Hari ini
 absenRoute.get("/today" , authMiddleware , controller.getAbsenToday.bind(controller));
 absenRoute.post("/today" , authMiddleware , controller.absenUserToday.bind(controller));
 absenRoute.delete("/today/:absenId" , authMiddleware, adminMiddleware , controller.deleteAbsenToday.bind(controller));
 
 // Absen user
 absenRoute.get("/user" , authMiddleware, controller.getAbsenUser.bind(controller));
-
-export default absenRoute;

@@ -2,7 +2,7 @@ import express from "express";
 import cookieparser from "cookie-parser";
 import { errorMiddleware } from "./common/middlewares/error.middleware";
 import { userRoute } from "./modules/user/user.route";
-import absenRoute from "./modules/absen/absen.route";
+import { absenRoute } from "./modules/absen/absen.route";
 
 const app = express();
 const port = 5000;

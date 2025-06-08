@@ -72,14 +72,13 @@ export class absenController {
     }
   }
 
-    // User Absen hari ini
+  // User Absen hari ini
   async absenUserToday(req: Request, res: Response, next: NextFunction) {
     try {
-      const { status, absenId } = req.body;
+
       const user = (req as any).user;
       const updatedAbsen = await this.service.AbsenToday({
-        absenId,
-        status,
+        ...req.body,
         userId: user.id,
       });
       res.status(200).json({
@@ -94,7 +93,7 @@ export class absenController {
       next(error);
     }
   }
-  
+
   // Hapus absen hari ini
   async deleteAbsenToday(req: Request, res: Response, next: NextFunction) {
     try {

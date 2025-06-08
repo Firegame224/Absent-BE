@@ -11,6 +11,14 @@ export interface User {
   updateAt: Date;
 }
 
+export interface userByIdDto {
+  userId : string
+}
+
+export interface usersByIdDto {
+  userId : string[]
+}
+
 export interface userDto {
   email: string;
   password: string;
@@ -18,4 +26,15 @@ export interface userDto {
 
 export interface findUserByEmailDto {
   email: string;
+}
+
+export interface updateUserDto {
+  userId: string,
+  email: string,
+  name: string | null,
+  role: Role | string
+}
+
+export interface deleteUsersDto {
+  userId : string | []
 }

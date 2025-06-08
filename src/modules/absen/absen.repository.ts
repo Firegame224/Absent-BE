@@ -1,6 +1,6 @@
-import type { AbsenStatus, User } from "@prisma/client";
 import prisma from "../../common/utils/prisma";
-import type { userAbsen } from "../../common/types/absen";
+import type { absenByDateDto, createAbsenDto, deleteAbsenDto, updateAbsenTodayDto, userAbsenTodayDto } from "../../common/types/absen";
+import type { userByIdDto } from "../../common/types/user";
 
 export class absenRepository {
   async getAbsenById(dto: { absenId: string }) {
@@ -11,11 +11,14 @@ export class absenRepository {
     });
   }
 
-  async getAbsenToday(dto: { date: Date }) {
+  async getAbsenToday(dto: absenByDateDto) {
     return await prisma.absens.findFirst({
       where: {
-        tanggal : dto.date
+        tanggal: dto.date,
       },
+      include : {
+        userAbsens :true
+      }
     });
   }
 
@@ -31,18 +34,31 @@ export class absenRepository {
     });
   }
 
-  async getAbsenUserById(dto: { userId: string }) {
+  async getAbsenUserToday(dto: userAbsenTodayDto) {
+    return await prisma.absenUser.findUnique({
+      where: {
+        absenId_userId: {
+          absenId: dto.absenId,
+          userId: dto.userId,
+        },
+        absen_status: true,
+      },
+    });
+  }
+
+  async getAbsenUserById(dto: userByIdDto) {
     return await prisma.absenUser.findMany({
       where: {
         userId: dto.userId,
       },
       include: {
         absen: true,
+        user: true,
       },
     });
   }
 
-  async createAbsen(dto: { userData: User[]; date: Date }) {
+  async createAbsenToday(dto: createAbsenDto) {
     return await prisma.absens.create({
       data: {
         tanggal: dto.date,
@@ -58,20 +74,23 @@ export class absenRepository {
       },
     });
   }
-  
-  async updateUserAbsen(dto: { userId : string , absenId : string , status : AbsenStatus }) {
+
+  async updateAbsenToday(dto: updateAbsenTodayDto) {
     return await prisma.absenUser.update({
       where: {
-        userId: dto.userId,
-        absenId: dto.absenId,
+        absenId_userId: {
+          absenId: dto.absenId,
+          userId: dto.userId,
+        },
       },
       data: {
+        absen_status: true,
         status: dto.status,
       },
     });
   }
 
-  async deleteAbsenToday(dto: { absenId: string; date: Date }) {
+  async deleteAbsenToday(dto: deleteAbsenDto) {
     return await prisma.absens.delete({
       where: {
         id: dto.absenId,

@@ -1,40 +1,77 @@
-import type { userDto } from "../../common/types/user";
+import type { Role } from "@prisma/client";
+import type { findUserByEmailDto, updateUserDto, userByIdDto, userDto, usersByIdDto } from "../../common/types/user";
 import prisma from "../../common/utils/prisma";
 
 export class userRepository {
   async getAllUser() {
     return await prisma.user.findMany({});
   }
-  async getUserById(userData: { id: string }) {
+
+  async getUsers(dto: usersByIdDto) {
+    return await prisma.user.findMany({
+      where: {
+        id: {
+          in: dto.userId,
+        },
+      },
+    });
+  }
+
+  async getUserById(dto: userByIdDto) {
     return await prisma.user.findUnique({
       where: {
-        id: userData.id,
+        id: dto.userId,
       },
       include: {
         absens: true,
       },
     });
   }
-  async getUserByEmail(userData: { email: string }) {
+
+  async getUserByEmail(dto: findUserByEmailDto ) {
     return await prisma.user.findUnique({
       where: {
-        email: userData.email,
+        email: dto.email,
       },
     });
   }
-  async createUser(userData: userDto) {
+
+  async createUser(dto: userDto) {
     return await prisma.user.create({
       data: {
-        email: userData.email,
-        password: userData.password,
-        name: userData.email.split("@")[0],
+        email: dto.email,
+        password: dto.password,
+        name: dto.email.split("@")[0],
       },
     });
   }
-  async deleteUser(userData: { userId: string }) {
+
+  async updateUser(dto: updateUserDto) {
+    return await prisma.user.update({
+      where: {
+        id: dto.userId
+      }, data: {
+        email: dto.email,
+        name: dto.name,
+        role: dto.role
+      }
+    })
+  }
+
+  async deleteUser(userData: userByIdDto) {
     return await prisma.user.delete({
       where: {
         id: userData.userId,
+      },
+    });
+  }
+
+  async deleteUsers(dto: usersByIdDto) {
+    return await prisma.user.deleteMany({
+      where: {
+        id: {
+          in: dto.userId,
+        },
       },
     });
   }

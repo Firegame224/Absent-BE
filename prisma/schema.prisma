@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./generate"
+  output = "../node_modules/generate"
 }
 
 datasource db {
@@ -28,6 +28,7 @@ model User {
   email    String  @unique
   password String?
   name     String?
+  image String  @default("https://i.pinimg.com/736x/5e/39/6b/5e396bb1b17681759922dd10f8a9d702.jpg")
 
   role Role @default(User)
 
@@ -49,7 +50,8 @@ model AbsenUser {
   absen   Absens @relation(references: [id], fields: [absenId], onDelete: Cascade)
   absenId String
 
-  status AbsenStatus @default(Alpha)
+  status       AbsenStatus @default(Alpha)
+  absen_status Boolean     @default(false)
 
-  @@id([absenId , userId])
+  @@id([absenId, userId])
 }

@@ -14,8 +14,12 @@ export async function authMiddleware(req : Request, res : Response, next : NextF
     try {
     const decoded = Jwt.decode(token!) as { id : string };
     
-    const user = await repository.getUserById({id : decoded.id});
+    const user = await repository.getUserById({userId : decoded.id});
     
+    if (!user) {
+        throw new httpException(401, "Unauthorized");
+    }
+
     (req as any).user = user;
 
     next();

@@ -4,6 +4,8 @@ import { convertObject } from "../../common/helpers/absen";
 import { createDate } from "../../common/helpers/date";
 import { userRepository } from "../user/user.repository";
 import { absenRepository } from "./absen.repository";
+import type { userByIdDto } from "../../common/types/user";
+import type { absenByIdDto, updateAbsenDto } from "../../common/types/absen";
 
 export class absenService {
   constructor(
@@ -33,9 +35,9 @@ export class absenService {
   }
 
   // Dapatkan riwayat absen user
-  async getAbsenUser(dto: { userId: string }) {
+  async getAbsenUser(dto: userByIdDto) {
     const existingUser = await this.userRepository.getUserById({
-      id: dto.userId,
+      userId: dto.userId,
     });
 
     if (!existingUser) {
@@ -67,14 +69,18 @@ export class absenService {
       throw new httpException(404, "User Not Found");
     }
 
-    return this.absenRepository.createAbsen({ userData: existingUsers, date });
+    return this.absenRepository.createAbsenToday({
+      userData: existingUsers,
+      date,
+    });
   }
 
   // User Absen Hari ini
-  async AbsenToday(dto: { absenId: string; userId: string; status: string }) {
+  async AbsenToday(dto: updateAbsenDto ) {
     const date = createDate(new Date());
+    
     const existingUser = await this.userRepository.getUserById({
-      id: dto.userId,
+      userId: dto.userId,
     });
 
     if (!existingUser) {
@@ -84,6 +90,15 @@ export class absenService {
     const existingAbsen = await this.absenRepository.getAbsenById({
       absenId: dto.absenId,
     });
+
+    const isAbsenToday = await this.absenRepository.getAbsenUserToday({
+      absenId: existingAbsen?.id as string,
+      userId: dto.userId,
+    });
+
+    if (isAbsenToday) {
+      throw new httpException(409, "Anda sudah absen hari ini");
+    }
 
     if (!existingAbsen) {
       throw new httpException(404, "Absen Not Found");
@@ -101,7 +116,7 @@ export class absenService {
       absenStatus = "Terlambat";
     }
 
-    const updatedAbsen = await this.absenRepository.updateUserAbsen({
+    const updatedAbsen = await this.absenRepository.updateAbsenToday({
       absenId: existingAbsen.id,
       userId: existingUser.id,
       status: absenStatus,
@@ -111,7 +126,7 @@ export class absenService {
   }
 
   // Hapus absen hari ini
-  async deleteAbsenToday(dto: { absenId: string }) {
+  async deleteAbsenToday(dto: absenByIdDto) {
     const date = createDate(new Date());
     const existingAbsen = await this.absenRepository.getAbsenById({
       absenId: dto.absenId,

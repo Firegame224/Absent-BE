@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { userService } from "./user.service";
 
 export class userController {
-  constructor(private readonly service: userService) {}
+  constructor(private readonly service: userService) { }
 
   async getAllUsers(_req: Request, res: Response, next: NextFunction) {
     try {
@@ -12,33 +12,68 @@ export class userController {
           success: true,
           code: 200,
         },
-        message: users.length,
+        message: "Mendapatkan semua user",
         data: users,
       });
     } catch (error) {
       next(error);
     }
   }
+  
   async getuserById(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
-      const existingUser = await this.service.getUserById({ id: user.id });
+      const existingUser = await this.service.getUserById({ userId: user.id });
       res.status(200).json({
         status: {
           success: true,
           code: 200,
         },
-        message: "berhasil mendapatkan data user",
+        message: "Berhasil mendapatkan data user",
         data: existingUser,
       });
     } catch (error) {
       next(error);
     }
   }
+
+  async updateUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const updatedUser = await this.service.updateUser({ ...req.body });
+
+      res.status(200).json({
+        status: {
+          success: true,
+          code: 200,
+        },
+        message: "Update success",
+        data: updatedUser
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const deletedUser = await this.service.deleteUser({ ...req.body });
+
+      res.status(200).json({
+        status: {
+          success: true,
+          code: 200,
+        },
+        message: "Delete success",
+        data: deletedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async signUp(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body;
-      const user = await this.service.signUp({ email, password });
+      const user = await this.service.signUp({...req.body });
       res.status(201).json({
         status: {
           success: true,
@@ -54,8 +89,7 @@ export class userController {
 
   async signIn(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password } = req.body;
-      const token = await this.service.signIn({ email, password });
+      const token = await this.service.signIn({ ...req.body });
 
       res.status(201).json({
         status: {

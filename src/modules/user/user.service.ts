@@ -2,10 +2,11 @@ import { httpException } from "../../common/errors/exception";
 import type { userRepository } from "./user.repository";
 import Jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import type { userDto } from "../../common/types/user";
+import type { deleteUsersDto, updateUserDto, userByIdDto, userDto } from "../../common/types/user";
+import type { Role } from "@prisma/client";
 
 export class userService {
-  constructor(private repository: userRepository) {}
+  constructor(private repository: userRepository) { }
   async getAllUsers() {
     const users = await this.repository.getAllUser();
     if (users.length === 0) {
@@ -14,14 +15,16 @@ export class userService {
 
     return users;
   }
-  async getUserById(dto: { id: string }) {
-    const user = this.repository.getUserById({ id: dto.id });
-    if(!user) {
-        throw new httpException(404, "User not Found")
+
+  async getUserById(dto: userByIdDto) {
+    const user = this.repository.getUserById({ userId: dto.userId });
+    if (!user) {
+      throw new httpException(404, "User not Found");
     }
 
     return user;
   }
+
   async signUp(dto: userDto) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
@@ -57,11 +60,51 @@ export class userService {
       throw new httpException(400, "Password salah");
     }
 
-    return this.generateToken({ id: existingUser.id });
+    return this.generateToken({ userId: existingUser.id });
   }
 
-  async generateToken(userData: { id: string }) {
-    return Jwt.sign({ id: userData.id }, process.env.JWT_SECRET as string, {
+  async updateUser(dto: updateUserDto) {
+    const existingUser = await this.repository.getUserById({ userId: dto.userId })
+
+    let roleUser: Role = "User";
+    if (dto.role === "User") {
+      roleUser = "User"
+    }
+    if (dto.role === "Admin") {
+      roleUser = "Admin"
+    }
+
+    if (!existingUser) {
+      throw new httpException(404, "user not found")
+    }
+
+    return await this.repository.updateUser({ email: dto.email || existingUser.email, name: dto.name || existingUser.name, role: roleUser || existingUser.role, userId: dto.userId })
+  }
+
+  async deleteUser(dto: deleteUsersDto) {
+    if (dto.userId instanceof Array) {
+      const existingUsers = await this.repository.getUsers({
+        userId: dto.userId,
+      });
+
+      if (existingUsers.length === 0) {
+        throw new httpException(404, "User Tidak ditemukan");
+      }
+
+      return await this.repository.deleteUsers({ userId: dto.userId });
+    }
+
+    const existingUser = await this.repository.getUserById({ userId: dto.userId });
+
+    if (!existingUser) {
+      throw new httpException(404, "User not found")
+    }
+
+    return await this.repository.deleteUser({ userId: dto.userId })
+  }
+
+  async generateToken(dto: userByIdDto) {
+    return Jwt.sign({ id: dto.userId }, process.env.JWT_SECRET as string, {
       expiresIn: "1d",
     });
   }
