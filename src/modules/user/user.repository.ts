@@ -1,5 +1,4 @@
-import type { Role } from "@prisma/client";
-import type { findUserByEmailDto, updateUserDto, userByIdDto, userDto, usersByIdDto } from "../../common/types/user";
+import type { findUserByEmailDto, updateUserDto, userByIdDto, userCreateDto, usersByIdDto, userDto } from "../../common/types/user";
 import prisma from "../../common/utils/prisma";
 
 export class userRepository {
@@ -36,12 +35,12 @@ export class userRepository {
     });
   }
 
-  async createUser(dto: userDto) {
+  async createUser(dto: userCreateDto) {
     return await prisma.user.create({
       data: {
         email: dto.email,
         password: dto.password,
-        name: dto.email.split("@")[0],
+        name: dto.name,
       },
     });
   }

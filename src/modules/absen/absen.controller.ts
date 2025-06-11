@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { absenService } from "./absen.service";
 
 export class absenController {
-  constructor(private readonly service: absenService) {}
+  constructor(private readonly service: absenService) { }
   // Dapatkan absen hari ini
   async getAbsenToday(_req: Request, res: Response, next: NextFunction) {
     try {
@@ -56,9 +56,9 @@ export class absenController {
   }
 
   // Buat absen hari ini
-  async createAbsen(_req: Request, res: Response, next: NextFunction) {
+  async createAbsenToday(_req: Request, res: Response, next: NextFunction) {
     try {
-      const createdAbsen = await this.service.createAbsen();
+      const createdAbsen = await this.service.createAbsenToday();
       res.status(200).json({
         status: {
           success: true,
@@ -88,6 +88,26 @@ export class absenController {
         },
         message: "Berhasil absen hari ini",
         data: updatedAbsen,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Mendapatkan data absen berdasarkan Id
+  async getAbsenById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { absenId } = req.params;
+
+      const absen = await this.service.getAbsenById({ absenId: String(absenId) })
+
+      res.status(200).json({
+        status: {
+          success: true,
+          code: 200,
+        },
+        message: "Berhasil mendapatkan data absen",
+        data: absen,
       });
     } catch (error) {
       next(error);

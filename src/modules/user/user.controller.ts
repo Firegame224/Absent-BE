@@ -71,9 +71,9 @@ export class userController {
     }
   }
 
-  async signUp(req: Request, res: Response, next: NextFunction) {
+  async createUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await this.service.signUp({...req.body });
+      const user = await this.service.createUser({...req.body });
       res.status(201).json({
         status: {
           success: true,

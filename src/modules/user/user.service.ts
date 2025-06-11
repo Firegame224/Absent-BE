@@ -4,6 +4,7 @@ import Jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import type { deleteUsersDto, updateUserDto, userByIdDto, userDto } from "../../common/types/user";
 import type { Role } from "@prisma/client";
+import { roleUser } from "../../common/helpers/role";
 
 export class userService {
   constructor(private repository: userRepository) { }
@@ -25,7 +26,7 @@ export class userService {
     return user;
   }
 
-  async signUp(dto: userDto) {
+  async createUser(dto: userDto) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     const existingUser = await this.repository.getUserByEmail({
@@ -39,6 +40,7 @@ export class userService {
     return await this.repository.createUser({
       email: dto.email,
       password: hashedPassword,
+      name: dto.email.split("@")[0] as string
     });
   }
 
@@ -66,19 +68,13 @@ export class userService {
   async updateUser(dto: updateUserDto) {
     const existingUser = await this.repository.getUserById({ userId: dto.userId })
 
-    let roleUser: Role = "User";
-    if (dto.role === "User") {
-      roleUser = "User"
-    }
-    if (dto.role === "Admin") {
-      roleUser = "Admin"
-    }
+    const role = roleUser(dto.role);
 
     if (!existingUser) {
       throw new httpException(404, "user not found")
     }
 
-    return await this.repository.updateUser({ email: dto.email || existingUser.email, name: dto.name || existingUser.name, role: roleUser || existingUser.role, userId: dto.userId })
+    return await this.repository.updateUser({ email: dto.email || existingUser.email, name: dto.name || existingUser.name, role: role || existingUser.role, userId: dto.userId })
   }
 
   async deleteUser(dto: deleteUsersDto) {
@@ -104,7 +100,7 @@ export class userService {
   }
 
   async generateToken(dto: userByIdDto) {
-    return Jwt.sign({ id: dto.userId }, process.env.JWT_SECRET as string, {
+    return Jwt.sign({ id: dto.userId }, process.env.JWT_SECRET!, {
       expiresIn: "1d",
     });
   }

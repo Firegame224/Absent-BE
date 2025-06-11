@@ -1,9 +1,9 @@
 import prisma from "../../common/utils/prisma";
-import type { absenByDateDto, createAbsenDto, deleteAbsenDto, updateAbsenTodayDto, userAbsenTodayDto } from "../../common/types/absen";
+import type { absenByDateDto, absenByIdDto, createAbsenDto, deleteAbsenDto, updateAbsenTodayDto, userAbsenTodayDto } from "../../common/types/absen";
 import type { userByIdDto } from "../../common/types/user";
 
 export class absenRepository {
-  async getAbsenById(dto: { absenId: string }) {
+  async getAbsenById(dto: absenByIdDto) {
     return await prisma.absens.findUnique({
       where: {
         id: dto.absenId,
@@ -30,7 +30,11 @@ export class absenRepository {
             tanggal: true,
           },
         },
-      },
+      },orderBy : {
+        absen  : {
+          tanggal : "asc"
+        }
+      }
     });
   }
 
@@ -42,6 +46,9 @@ export class absenRepository {
           userId: dto.userId,
         },
         absen_status: true,
+        absen : {
+          tanggal : dto.date
+        }
       },
     });
   }

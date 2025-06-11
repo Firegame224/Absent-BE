@@ -12,11 +12,17 @@ export interface User {
 }
 
 export interface userByIdDto {
-  userId : string
+  userId: string
 }
 
 export interface usersByIdDto {
-  userId : string[]
+  userId: string[]
+}
+
+export interface userCreateDto {
+  email: string;
+  password: string;
+  name: string;
 }
 
 export interface userDto {
@@ -32,9 +38,9 @@ export interface updateUserDto {
   userId: string,
   email: string,
   name: string | null,
-  role: Role | string
+  role: Role
 }
 
 export interface deleteUsersDto {
-  userId : string | []
+  userId: string | []
 }

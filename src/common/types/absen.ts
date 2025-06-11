@@ -51,4 +51,5 @@ export interface deleteAbsenDto {
 export interface userAbsenTodayDto {
   userId: string
   absenId: string;
+  date : Date;
 }
