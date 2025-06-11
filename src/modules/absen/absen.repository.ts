@@ -12,7 +12,7 @@ export class absenRepository {
   }
 
   async getAbsenToday(dto: absenByDateDto) {
-    return await prisma.absens.findFirst({
+    return await prisma.absens.findUnique({
       where: {
         tanggal: dto.date,
       },
@@ -46,9 +46,6 @@ export class absenRepository {
           userId: dto.userId,
         },
         absen_status: true,
-        absen : {
-          tanggal : dto.date
-        }
       },
     });
   }

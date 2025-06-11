@@ -19,8 +19,8 @@ export class userController {
       next(error);
     }
   }
-  
-  async getuserById(req: Request, res: Response, next: NextFunction) {
+
+  async getUserById(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
       const existingUser = await this.service.getUserById({ userId: user.id });
@@ -73,7 +73,7 @@ export class userController {
 
   async createUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = await this.service.createUser({...req.body });
+      const user = await this.service.createUser({ ...req.body });
       res.status(201).json({
         status: {
           success: true,
@@ -90,15 +90,36 @@ export class userController {
   async signIn(req: Request, res: Response, next: NextFunction) {
     try {
       const token = await this.service.signIn({ ...req.body });
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          maxAge: 24 * 60 * 60 * 1000,
+        })
+      .status(200).json({
+          status: {
+            success: true,
+            code: 200,
+          },
+          message: "signIn success",
+        });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-      res.status(201).json({
-        status: {
-          success: true,
-          code: 200,
-        },
-        message: "signIn success",
-        token,
-      });
+  async logOut(_req: Request, res: Response, next: NextFunction) {
+    try {
+      res
+        .clearCookie("token")
+        .status(200).json({
+          status: {
+            success: true,
+            code: 200,
+          },
+          message: "logout success",
+        });
     } catch (error) {
       next(error);
     }
