@@ -62,7 +62,7 @@ export class userService {
       throw new httpException(400, "Password salah");
     }
 
-    return this.generateToken({ userId: existingUser.id });
+    return { token: this.generateToken({ userId: existingUser.id }), role: existingUser.role };
   }
 
   async updateUser(dto: updateUserDto) {

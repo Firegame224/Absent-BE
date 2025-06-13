@@ -89,7 +89,7 @@ export class userController {
 
   async signIn(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = await this.service.signIn({ ...req.body });
+      const { token, role } = await this.service.signIn({ ...req.body });
       res
         .cookie("token", token, {
           httpOnly: true,
@@ -97,11 +97,12 @@ export class userController {
           sameSite: "lax",
           maxAge: 24 * 60 * 60 * 1000,
         })
-      .status(200).json({
+        .status(200).json({
           status: {
             success: true,
             code: 200,
           },
+          data: role,
           message: "signIn success",
         });
     } catch (error) {
