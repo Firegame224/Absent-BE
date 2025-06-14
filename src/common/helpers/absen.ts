@@ -3,26 +3,49 @@ import { Allstatus } from "../constant/status.absen";
 import { group } from "console";
 
 // Helper untuk convert array hasil prisma
-export async function convertObject(raw: any[]) {
+export function convertObjects(raw: any[]) {
   const grouped: Record<string, Record<string, number>> = {};
   raw.forEach((row: userAbsen) => {
-    const tanggal = row?.absen?.tanggal?.toISOString().split("T")[0];
+    const tanggal = row?.absen?.tanggal;
+    const localTanggal = new Date(tanggal.getTime() + (7 * 60 * 60 * 1000)).toISOString().split("T")[0];
     const status = row?.status
 
-    if (!tanggal) return;
-    if (!grouped[tanggal]) grouped[tanggal] = {};
+    if (!localTanggal) return;
+    if (!grouped[localTanggal]) grouped[localTanggal] = {};
 
     Allstatus.forEach((stat) => {
-      if (grouped[tanggal]![stat] === undefined) {
-        grouped[tanggal]![stat] = 0;
+      if (grouped[localTanggal]![stat] === undefined) {
+        grouped[localTanggal]![stat] = 0;
       }
     });
 
-    grouped[tanggal]![status]!++
+    grouped[localTanggal]![status]!++
   });
 
   return Object.entries(grouped).map(([tanggal, status]) => ({
     tanggal,
     ...status,
   }));
+}
+
+export function convertObject(raw: any[]) {
+  const grouped: Record<string, Record<string, number>> = {};
+  raw.forEach((row: userAbsen) => {
+    const tanggal = row?.absen?.tanggal
+    const localTanggal = new Date(tanggal.getTime() + (7 * 60 * 60 * 1000)).toISOString().split("T")[0];
+    const status = row?.status
+
+    if (!localTanggal) return {}
+    if (!grouped[localTanggal]) grouped[localTanggal] = {};
+
+    Allstatus.forEach((stat) => {
+      if (grouped[localTanggal]![stat] === undefined) {
+        grouped[localTanggal]![stat] = 0;
+      }
+    });
+
+    grouped[localTanggal]![status]!++
+  });
+
+  return grouped
 }

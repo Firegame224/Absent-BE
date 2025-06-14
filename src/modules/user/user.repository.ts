@@ -3,7 +3,11 @@ import prisma from "../../common/utils/prisma";
 
 export class userRepository {
   async getAllUser() {
-    return await prisma.user.findMany({});
+    return await prisma.user.findMany({
+      where : {
+        role : "User"
+      }
+    });
   }
 
   async getUsers(dto: usersByIdDto) {

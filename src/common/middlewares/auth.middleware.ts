@@ -5,7 +5,7 @@ import { httpException } from "../errors/exception";
 
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-    const token = await req.cookies["token"]
+    const token = await req.cookies.token;
 
     if (!token) {
         throw new httpException(404, "Unauthorized")

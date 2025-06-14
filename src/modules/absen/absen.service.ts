@@ -1,12 +1,13 @@
 import { AbsenStatus } from "@prisma/client";
 import { httpException } from "../../common/errors/exception";
-import { convertObject } from "../../common/helpers/absen";
+import { convertObject, convertObjects } from "../../common/helpers/absen";
 import { userRepository } from "../user/user.repository";
 import { absenRepository } from "./absen.repository";
 import type { userByIdDto } from "../../common/types/user";
 import type { absenByIdDto, updateAbsenDto } from "../../common/types/absen";
 import { date } from "../../common/constant/date";
 import { absenStatus } from "../../common/helpers/status";
+import { createDate } from "../../common/helpers/date";
 
 export class absenService {
   constructor(
@@ -22,7 +23,25 @@ export class absenService {
       throw new httpException(404, "Absen Not Found");
     }
 
-    return convertObject(existingAbsen);
+    return convertObjects(existingAbsen);
+  }
+
+  // Dapatkan absen user hari ini untuk data charts
+  async getAbsenUserToday() {
+    const date = createDate(new Date())
+    const existingAbsenToday = await this.absenRepository.getAbsenToday({ date })
+
+    if (!existingAbsenToday) {
+      throw new httpException(404, "Absen Hari ini belum ada")
+    }
+
+    const existingUserAbsenToday = await this.absenRepository.getAbsenUserTodays({ date })
+
+    if (existingUserAbsenToday.length === 0) {
+      throw new httpException(404, "Absen Hari ini tidak ada")
+    }
+
+    return convertObject(existingUserAbsenToday)
   }
 
   // Dapatkan Absen hari ini

@@ -37,6 +37,21 @@ export class absenController {
     }
   }
 
+  async getAbsenUserToday(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const absens = await this.service.getAbsenUserToday()
+      res.status(200).json({
+        status: {
+          success: true,
+          code: 200,
+        },
+        message: "Berhasil mendapatkan data absen hari ini",
+        data: absens,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   // Riwayat absen user
   async getAbsenUser(req: Request, res: Response, next: NextFunction) {
     try {
@@ -75,7 +90,6 @@ export class absenController {
   // User Absen hari ini
   async absenUserToday(req: Request, res: Response, next: NextFunction) {
     try {
-
       const user = (req as any).user;
       const updatedAbsen = await this.service.AbsenToday({
         ...req.body,

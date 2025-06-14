@@ -22,4 +22,4 @@ userRoute.delete("/", authMiddleware, adminMiddleware, controller.deleteUser.bin
 userRoute.get("/details", authMiddleware, controller.getUserById.bind(controller));
 userRoute.post("/create", validateMiddleware(userSChema), controller.createUser.bind(controller));
 userRoute.post("/signIn", validateMiddleware(userSChema), controller.signIn.bind(controller));
-userRoute.post("/logout", authMiddleware, controller.logOut.bind(controller));
+userRoute.post("/logout", controller.logOut.bind(controller));

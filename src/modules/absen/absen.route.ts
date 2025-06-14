@@ -15,13 +15,14 @@ const controller = new absenController(service);
 
 // Absen admin
 absenRoute.get("/", authMiddleware, adminMiddleware, controller.getAllAbsen.bind(controller));
-absenRoute.post("/", authMiddleware , adminMiddleware , controller.createAbsenToday.bind(controller));
+absenRoute.post("/", authMiddleware, adminMiddleware, controller.createAbsenToday.bind(controller));
 
 // Absen Hari ini
-absenRoute.get("/today" , authMiddleware , controller.getAbsenToday.bind(controller));
-absenRoute.post("/today" , authMiddleware , controller.absenUserToday.bind(controller));
-absenRoute.delete("/today/:absenId" , authMiddleware, adminMiddleware , controller.deleteAbsenToday.bind(controller));
+absenRoute.get("/today", authMiddleware, controller.getAbsenToday.bind(controller));
+absenRoute.get("/today-user", authMiddleware, adminMiddleware, controller.getAbsenUserToday.bind(controller));
+absenRoute.post("/today", authMiddleware, controller.absenUserToday.bind(controller));
+absenRoute.delete("/today/:absenId", authMiddleware, adminMiddleware, controller.deleteAbsenToday.bind(controller));
 
 // Absen user
-absenRoute.get("/user" , authMiddleware, controller.getAbsenUser.bind(controller));
-absenRoute.get("/:absenId" ,controller.getAbsenById.bind(controller));
+absenRoute.get("/user", authMiddleware, controller.getAbsenUser.bind(controller));
+absenRoute.get("/:absenId", controller.getAbsenById.bind(controller));

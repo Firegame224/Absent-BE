@@ -16,8 +16,8 @@ export class absenRepository {
       where: {
         tanggal: dto.date,
       },
-      include : {
-        userAbsens :true
+      include: {
+        userAbsens: true
       }
     });
   }
@@ -30,9 +30,9 @@ export class absenRepository {
             tanggal: true,
           },
         },
-      },orderBy : {
-        absen  : {
-          tanggal : "asc"
+      }, orderBy: {
+        absen: {
+          tanggal: "asc"
         }
       }
     });
@@ -50,6 +50,22 @@ export class absenRepository {
     });
   }
 
+
+  async getAbsenUserTodays(dto: { date: Date }) {
+    return await prisma.absenUser.findMany({
+      where: {
+        absen: {
+          tanggal: dto.date
+        }
+      }, include: {
+        absen: {
+          select: {
+            tanggal: true
+          }
+        }
+      }
+    })
+  }
   async getAbsenUserById(dto: userByIdDto) {
     return await prisma.absenUser.findMany({
       where: {
