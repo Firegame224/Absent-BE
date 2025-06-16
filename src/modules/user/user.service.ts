@@ -68,7 +68,7 @@ export class userService {
   async updateUser(dto: updateUserDto) {
     const existingUser = await this.repository.getUserById({ userId: dto.userId })
 
-    const role = roleUser(dto.role);
+    const role = roleUser(dto.role , existingUser?.role );
 
     if (!existingUser) {
       throw new httpException(404, "user not found")

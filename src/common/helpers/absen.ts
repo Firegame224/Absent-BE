@@ -1,6 +1,5 @@
 import type { userAbsen } from "../types/absen";
 import { Allstatus } from "../constant/status.absen";
-import { group } from "console";
 
 // Helper untuk convert array hasil prisma
 export function convertObjects(raw: any[]) {

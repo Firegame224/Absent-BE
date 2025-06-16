@@ -15,12 +15,14 @@ const controller = new absenController(service);
 
 // Absen admin
 absenRoute.get("/", authMiddleware, adminMiddleware, controller.getAllAbsen.bind(controller));
-absenRoute.post("/", authMiddleware, adminMiddleware, controller.createAbsenToday.bind(controller));
 
 // Absen Hari ini
+absenRoute.post("/today", authMiddleware, adminMiddleware, controller.createAbsenToday.bind(controller));
 absenRoute.get("/today", authMiddleware, controller.getAbsenToday.bind(controller));
-absenRoute.get("/today-user", authMiddleware, adminMiddleware, controller.getAbsenUserToday.bind(controller));
-absenRoute.post("/today", authMiddleware, controller.absenUserToday.bind(controller));
+
+// Absen user
+absenRoute.get("/today-user", authMiddleware, controller.getAbsenUserToday.bind(controller));
+absenRoute.post("/today-user", authMiddleware, controller.absenUserToday.bind(controller));
 absenRoute.delete("/today/:absenId", authMiddleware, adminMiddleware, controller.deleteAbsenToday.bind(controller));
 
 // Absen user

@@ -27,7 +27,7 @@ export class absenService {
   }
 
   // Dapatkan absen user hari ini untuk data charts
-  async getAbsenUserToday() {
+  async getAllAbsenUserToday() {
     const date = createDate(new Date())
     const existingAbsenToday = await this.absenRepository.getAbsenToday({ date })
 
@@ -35,13 +35,13 @@ export class absenService {
       throw new httpException(404, "Absen Hari ini belum ada")
     }
 
-    const existingUserAbsenToday = await this.absenRepository.getAbsenUserTodays({ date })
+    const existingUserAbsenToday = await this.absenRepository.getAllUserAbsenTodays({ date })
 
     if (existingUserAbsenToday.length === 0) {
       throw new httpException(404, "Absen Hari ini tidak ada")
     }
 
-    return convertObject(existingUserAbsenToday)
+    return existingUserAbsenToday
   }
 
   // Dapatkan Absen hari ini
@@ -55,6 +55,25 @@ export class absenService {
     return absenToday;
   }
 
+  async getUserAbsenToday(dto: userByIdDto) {
+    const existingUser = await this.userRepository.getUserById({
+      userId: dto.userId,
+    });
+
+    if (!existingUser) {
+      throw new httpException(404, "User not Found");
+    }
+
+    const Absen = await this.absenRepository.getUserAbsenToday({
+      userId: dto.userId,
+      date
+    });
+
+    if (!Absen) {
+      throw new httpException(404, "Absen not Found");
+    }
+    return Absen;
+  }
   // Dapatkan data absen berdasarkan id
   async getAbsenById(dto: absenByIdDto) {
     const existingAbsen = await this.absenRepository.getAbsenById({ absenId: dto.absenId });
@@ -94,7 +113,7 @@ export class absenService {
       throw new httpException(409, "Absen hari ini sudah ada");
     }
 
-    const existingUsers = await this.userRepository.getAllUser();
+    const existingUsers = await this.userRepository.getUserOnly();
 
     if (existingUsers.length === 0) {
       throw new httpException(404, "User Not Found");

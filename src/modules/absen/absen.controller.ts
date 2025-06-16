@@ -37,9 +37,27 @@ export class absenController {
     }
   }
 
-  async getAbsenUserToday(_req: Request, res: Response, next: NextFunction) {
+  // Cek apakah user sudah absen atau belum
+  async getAbsenUserToday(req: Request, res: Response, next: NextFunction) {
     try {
-      const absens = await this.service.getAbsenUserToday()
+      const user = (req as any).user
+      const absens = await this.service.getUserAbsenToday({ userId: user.id })
+      res.status(200).json({
+        status: {
+          success: true,
+          code: 200,
+        },
+        message: "Berhasil mendapatkan data absen user hari ini",
+        data: absens,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAllAbsenUserToday(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const absens = await this.service.getAllAbsenUserToday()
       res.status(200).json({
         status: {
           success: true,
@@ -52,6 +70,7 @@ export class absenController {
       next(error);
     }
   }
+
   // Riwayat absen user
   async getAbsenUser(req: Request, res: Response, next: NextFunction) {
     try {

@@ -50,8 +50,18 @@ export class absenRepository {
     });
   }
 
+  async getUserAbsenToday(dto: { userId: string, date: Date }) {
+    return await prisma.absenUser.findFirst({
+      where: {
+        userId: dto.userId,
+        absen: {
+          tanggal: dto.date
+        }
+      }
+    });
+  }
 
-  async getAbsenUserTodays(dto: { date: Date }) {
+  async getAllUserAbsenTodays(dto: { date: Date }) {
     return await prisma.absenUser.findMany({
       where: {
         absen: {

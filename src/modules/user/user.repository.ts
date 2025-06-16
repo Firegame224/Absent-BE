@@ -3,6 +3,10 @@ import prisma from "../../common/utils/prisma";
 
 export class userRepository {
   async getAllUser() {
+    return await prisma.user.findMany({});
+  }
+
+  async getUserOnly() {
     return await prisma.user.findMany({
       where : {
         role : "User"
@@ -31,7 +35,7 @@ export class userRepository {
     });
   }
 
-  async getUserByEmail(dto: findUserByEmailDto ) {
+  async getUserByEmail(dto: findUserByEmailDto) {
     return await prisma.user.findUnique({
       where: {
         email: dto.email,

@@ -20,10 +20,27 @@ export class userController {
     }
   }
 
-  async getUserById(req: Request, res: Response, next: NextFunction) {
+  async getUserDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
       const existingUser = await this.service.getUserById({ userId: user.id });
+      res.status(200).json({
+        status: {
+          success: true,
+          code: 200,
+        },
+        message: "Berhasil mendapatkan data user",
+        data: existingUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.params;
+      const existingUser = await this.service.getUserById({ userId: userId as string });
       res.status(200).json({
         status: {
           success: true,

@@ -19,7 +19,8 @@ userRoute.patch("/", authMiddleware, adminMiddleware, validateMiddleware(userUpd
 userRoute.delete("/", authMiddleware, adminMiddleware, controller.deleteUser.bind(controller));
 
 // User route
-userRoute.get("/details", authMiddleware, controller.getUserById.bind(controller));
+userRoute.get("/details", authMiddleware, controller.getUserDetails.bind(controller));
 userRoute.post("/create", validateMiddleware(userSChema), controller.createUser.bind(controller));
 userRoute.post("/signIn", validateMiddleware(userSChema), controller.signIn.bind(controller));
-userRoute.post("/logout", controller.logOut.bind(controller));
+userRoute.post("/logout", controller.logOut.bind(controller)); 
+userRoute.get("/:userId", authMiddleware, adminMiddleware, controller.getUserById.bind(controller));
