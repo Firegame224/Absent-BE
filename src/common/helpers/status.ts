@@ -4,13 +4,13 @@ import { date } from "../constant/date";
 export function absenStatus ( status : string , dateLate : Date ) {
         let absenStatus: AbsenStatus = "Alpha";
     
-        if (status === "Hadir") {
+        if (status === "hadir") {
           absenStatus = "Hadir";
         }
-        if (status === "Izin") {
+        if (status === "izin") {
           absenStatus = "Izin";
         }
-        if (status === "Terlambat" || date > dateLate ) {
+        if (status === "terlambat" || date > dateLate ) {
           absenStatus = "Terlambat";
         }
 
